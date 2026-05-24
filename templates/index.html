@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>手話翻訳 | Modern Sign Translator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;500&family=Shippori+Mincho:wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #fcfaf7;
+            --text: #2d3436;
+            --accent: #30336b;
+            --gold: #d4af37;
+            --muted: #95a5a6;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image: url("https://www.transparenttextures.com/patterns/paper.png");
+            font-family: 'Noto Sans JP', sans-serif;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .app-wrapper {
+            display: flex;
+            gap: 50px;
+            max-width: 1100px;
+            width: 90%;
+            padding: 40px;
+            background: rgba(255,255,255,0.4);
+        }
+
+        .camera-container { flex: 1.5; }
+        .video-box {
+            border: 1px solid var(--text);
+            box-shadow: 12px 12px 0px rgba(48, 51, 107, 0.1);
+            background: white;
+            line-height: 0;
+        }
+        img { width: 100%; height: auto; }
+
+        .info-container { flex: 1; display: flex; flex-direction: column; justify-content: center; }
+        h1 {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 2.8rem;
+            color: var(--accent);
+            border-bottom: 2px solid var(--accent);
+            margin: 0;
+            padding-bottom: 10px;
+        }
+
+        .type-label { font-size: 0.8rem; letter-spacing: 4px; margin: 15px 0 30px 0; color: var(--muted); }
+
+        .translation-box {
+            background: white;
+            padding: 30px;
+            border-left: 4px solid var(--accent);
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
+
+        .box-title { font-size: 0.75rem; color: var(--muted); margin-bottom: 15px; font-weight: 500; }
+        
+        #jp-output, #tourist-output {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 1.6rem;
+            color: var(--text);
+        }
+
+        .english-sub {
+            font-size: 1rem;
+            color: var(--muted);
+            font-family: 'Noto Sans JP';
+            margin-top: 5px;
+        }
+
+        .btn-listen {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-family: 'Noto Sans JP';
+            letter-spacing: 1px;
+        }
+
+        .footer-status {
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: var(--muted);
+            display: flex;
+            align-items: center;
+        }
+
+        .pulse {
+            width: 8px; height: 8px;
+            background: #2ecc71;
+            border-radius: 50%;
+            margin-right: 10px;
+            box-shadow: 0 0 8px #2ecc71;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <div class="camera-container">
+            <div class="video-box">
+                <img src="{{ url_for('video_feed') }}">
+            </div>
+        </div>
+
+        <div class="info-container">
+            <h1>手話翻訳</h1>
+            <div class="type-label">ASL TO JAPANESE</div>
+
+            <div class="translation-box">
+                <div class="box-title">翻訳 | SIGN TRANSLATION</div>
+                <div id="jp-output">待機中...</div>
+            </div>
+
+            <div class="translation-box" style="border-left-color: var(--gold);">
+                <div class="box-title">観光客の返答 | TOURIST REPLY</div>
+                <div id="tourist-output">---</div>
+                <button class="btn-listen" onclick="startListening()">🎤 LISTEN TO TOURIST</button>
+            </div>
+
+            <div class="footer-status">
+                <div class="pulse"></div>
+                <span>システム稼働中 | SYSTEM ONLINE</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Poll for gesture translations
+        setInterval(function() {
+            fetch('/get_text')
+                .then(r => r.json())
+                .then(data => {
+                    if (data.jp !== "") {
+                        document.getElementById('jp-output').innerHTML = `
+                            ${data.jp}
+                            <div class="english-sub">(${data.en})</div>
+                        `;
+                    }
+                });
+        }, 500);
+
+        // Tourist Listening
+        function startListening() {
+            const out = document.getElementById('tourist-output');
+            out.innerText = "Listening...";
+            fetch('/listen_tourist')
+                .then(r => r.json())
+                .then(data => {
+                    out.innerHTML = `
+                        <span style="font-size: 0.9rem; color: #95a5a6;">${data.jp || ''}</span>
+                        <br>${data.en || 'No speech detected'}
+                    `;
+                });
+        }
+    </script>
+</body>
+</html>
