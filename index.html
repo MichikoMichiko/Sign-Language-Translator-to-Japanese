@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>桜花手話譚｜Sakura Sign Language Bridge</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700&family=Shippori+Mincho:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #fff5f0 0%, #ffe8e0 100%);
+            font-family: 'Noto Sans JP', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* メインコンテナ */
+        .landscape-container {
+            max-width: 1450px;
+            width: 100%;
+            background: rgba(255, 248, 245, 0.75);
+            backdrop-filter: blur(5px);
+            border-radius: 64px 48px 64px 48px;
+            box-shadow: 0 30px 45px -20px rgba(200, 120, 140, 0.3), inset 0 0 0 1px rgba(255, 230, 220, 0.9);
+            overflow: hidden;
+            position: relative;
+            z-index: 20;
+        }
+
+        /* 和風タブナビゲーション */
+        .japanese-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+            background: rgba(230, 190, 180, 0.85);
+            backdrop-filter: blur(12px);
+            padding: 12px 24px;
+            border-bottom: 2px solid #f0c0b0;
+        }
+        .tab-btn {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            background: none;
+            border: none;
+            color: #fff0e8;
+            padding: 8px 28px;
+            cursor: pointer;
+            letter-spacing: 3px;
+            transition: 0.2s;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .tab-btn.active {
+            background: #f5cdc0;
+            color: #9e5a4a;
+            box-shadow: 0 0 12px rgba(245, 180, 160, 0.6);
+        }
+        .tab-btn:hover:not(.active) {
+            background: rgba(245, 205, 192, 0.5);
+            color: #ffe5dc;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px 35px;
+            animation: fadeIn 0.5s ease;
+        }
+        .tab-content.active-tab {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(12px);}
+            to { opacity: 1; transform: translateY(0);}
+        }
+
+        /* ========= HOME タブ ========= */
+        .home-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 65vh;
+            position: relative;
+            background: radial-gradient(ellipse at 30% 40%, rgba(255,220,210,0.3), transparent);
+        }
+        .greeting-card {
+            text-align: center;
+            z-index: 15;
+        }
+        .konnichiwa {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 5rem;
+            font-weight: 800;
+            color: #d97a68;
+            text-shadow: 4px 4px 12px rgba(0,0,0,0.05), 0 0 25px #ffc0b0;
+            letter-spacing: 10px;
+            background: linear-gradient(135deg, #e08a78, #f5b6a5);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: softGlow 2s infinite alternate;
+        }
+        @keyframes softGlow {
+            0% { text-shadow: 0 0 5px #ffccbc; }
+            100% { text-shadow: 0 0 25px #ffaa99, 0 0 8px #ffd9ce; }
+        }
+        .michiko-name {
+            font-size: 2rem;
+            margin-top: 20px;
+            color: #bc7a68;
+            font-weight: 500;
+            background: rgba(255,235,225,0.7);
+            display: inline-block;
+            padding: 5px 30px;
+            border-radius: 80px;
+            backdrop-filter: blur(4px);
+        }
+        
+        /* ========= レジェンドタブ ========= */
+        .legend-container {
+            background: rgba(255, 245, 240, 0.9);
+            border-radius: 48px;
+            padding: 20px;
+        }
+        .legend-header h2 {
+            font-size: 2rem;
+            color: #bc6a5a;
+            text-align: center;
+        }
+        .legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 28px;
+            margin-top: 20px;
+        }
+        .sign-card {
+            background: #fffaf7;
+            border-radius: 36px;
+            border: 1px solid #f5cfc2;
+            transition: transform 0.2s;
+            cursor: pointer;
+        }
+        .sign-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 28px rgba(200, 100, 100, 0.2);
+            border-color: #e8aa98;
+        }
+        .sign-img {
+            background: #fff5f0;
+            border-bottom: 3px solid #fad5c8;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .sign-label {
+            padding: 16px;
+            text-align: center;
+        }
+        .sign-label .jp-word {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #b55a48;
+        }
+        .legend-note {
+            margin-top: 30px;
+            background: #ffe6de;
+            border-radius: 60px;
+            padding: 12px;
+            text-align: center;
+            color: #a75e4e;
+        }
+        
+        /* ========= 翻訳タブ 改善・明確なUI ========= */
+        .translation-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 35px;
+            align-items: stretch;
+        }
+        
+        /* カメラパネル */
+        .camera-panel {
+            flex: 1.3;
+            min-width: 300px;
+            background: #f0dbd0;
+            border-radius: 48px;
+            padding: 15px;
+            box-shadow: 0 20px 30px rgba(0,0,0,0.1), 0 0 0 4px #ffe5dc, 0 0 0 8px #e8bcae;
+        }
+        .video-box {
+            border-radius: 38px;
+            overflow: hidden;
+            background: #2a1e18;
+            position: relative;
+        }
+        .video-box img {
+            width: 100%;
+            display: block;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+        }
+        .camera-label {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 0.85rem;
+            color: #bc7a68;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        .camera-label span {
+            background: #ffe0d6;
+            padding: 5px 15px;
+            border-radius: 60px;
+            display: inline-block;
+        }
+        
+        /* 右側情報パネル */
+        .info-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+        
+        /* 翻訳結果カード */
+        .translation-card {
+            background: rgba(255, 248, 245, 0.98);
+            backdrop-filter: blur(4px);
+            border-radius: 44px;
+            padding: 28px;
+            border-left: 8px solid #e8aa98;
+            box-shadow: 0 12px 28px rgba(0,0,0,0.08);
+            transition: all 0.2s;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 2px dotted #f0c0b0;
+            padding-bottom: 12px;
+            margin-bottom: 20px;
+        }
+        .card-header .icon {
+            font-size: 1.8rem;
+        }
+        .card-header .title {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #b55a48;
+            letter-spacing: 2px;
+        }
+        .card-header .sub {
+            font-size: 0.7rem;
+            color: #d4a090;
+            margin-left: auto;
+        }
+        .jp-output-text {
+            font-family: 'Shippori Mincho', serif;
+            font-size: 1.8rem;
+            font-weight: 500;
+            color: #9e5a4a;
+            line-height: 1.4;
+            min-height: 100px;
+            word-break: break-word;
+        }
+        .en-sub {
+            font-size: 0.9rem;
+            color: #c28a78;
+            margin-top: 15px;
+            padding-left: 12px;
+            border-left: 3px solid #f0c0b0;
+        }
+        
+        /* 観光客音声カード - 明確な「SPEAK HERE」 */
+        .tourist-card {
+            background: linear-gradient(135deg, #fff5f0, #ffefe8);
+            border-left: 8px solid #f0b6a4;
+            position: relative;
+            overflow: hidden;
+        }
+        .tourist-card::before {
+            content: "🌸";
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 3rem;
+            opacity: 0.12;
+            pointer-events: none;
+        }
+        .speak-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #e8aa98;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 60px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 12px;
+        }
+        .mic-area {
+            background: #fef3ed;
+            border-radius: 36px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            border: 1px dashed #e8aa98;
+        }
+        .tourist-output-box {
+            background: #fffaf5;
+            border-radius: 32px;
+            padding: 20px;
+            min-height: 100px;
+            margin: 10px 0;
+            box-shadow: inset 0 1px 4px rgba(0,0,0,0.02), 0 2px 8px rgba(0,0,0,0.02);
+        }
+        .tourist-jp {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: #bc6a5a;
+            font-family: 'Shippori Mincho', serif;
+        }
+        .tourist-en {
+            font-size: 0.85rem;
+            color: #c28a78;
+            margin-top: 8px;
+        }
+        .btn-listen {
+            background: #cf9a88;
+            width: 100%;
+            padding: 16px;
+            border-radius: 60px;
+            font-weight: bold;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+        }
+        .btn-listen:hover {
+            background: #e0aa98;
+            transform: scale(1.01);
+            box-shadow: 0 8px 18px rgba(200, 120, 100, 0.3);
+        }
+        .speak-hint {
+            font-size: 0.7rem;
+            color: #e8aa98;
+            text-align: center;
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .footer-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.7rem;
+            margin-top: 15px;
+            color: #bc7a68;
+        }
+        .pulse {
+            width: 8px;
+            height: 8px;
+            background: #e8aa98;
+            border-radius: 50%;
+            animation: pulseRed 1.2s infinite;
+        }
+        @keyframes pulseRed {
+            0% { opacity: 0.4; transform: scale(0.8);}
+            100% { opacity: 1; transform: scale(1.2);}
+        }
+        
+        /* 背景の桜と富士山 */
+        .fuji-bg {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+        }
+        .mt-fuji {
+            position: absolute;
+            bottom: 0;
+            left: 3%;
+            width: 360px;
+            opacity: 0.3;
+            filter: hue-rotate(340deg);
+        }
+        .sakura-tree {
+            position: absolute;
+            bottom: 0;
+            right: 2%;
+            width: 320px;
+            opacity: 0.85;
+        }
+        .sakura-storm {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 25;
+            overflow: hidden;
+        }
+        .petal-fall {
+            position: absolute;
+            background-size: contain;
+            background-repeat: no-repeat;
+            opacity: 0.85;
+            animation: fallCustom linear infinite;
+        }
+        @keyframes fallCustom {
+            0% { transform: translateY(-15vh) rotate(0deg); opacity: 0.9; }
+            100% { transform: translateY(120vh) rotate(360deg); opacity: 0; }
+        }
+        
+        @media (max-width: 950px) {
+            .translation-layout { flex-direction: column; }
+            .mt-fuji { width: 200px; left: -30px; opacity: 0.25; }
+            .sakura-tree { width: 180px; }
+            .konnichiwa { font-size: 3rem; }
+            .jp-output-text { font-size: 1.3rem; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="fuji-bg">
+    <svg class="mt-fuji" viewBox="0 0 300 200" fill="none">
+        <path d="M150 20 L290 180 L10 180 L150 20Z" fill="#f2ded5" stroke="#e8bcae" stroke-width="1.5" opacity="0.9"/>
+        <path d="M150 40 L260 170 L40 170 L150 40Z" fill="#ffefea" opacity="0.95"/>
+        <path d="M150 70 L230 170 L70 170 L150 70Z" fill="#fff6f2" opacity="0.95"/>
+        <circle cx="150" cy="135" r="28" fill="#fff0ea" opacity="0.8" />
+    </svg>
+    <svg class="sakura-tree" viewBox="0 0 240 340">
+        <path d="M120 330 L120 200 Q130 150 160 120" stroke="#c27e6a" stroke-width="6" fill="none"/>
+        <path d="M120 220 Q90 180 60 160" stroke="#c27e6a" stroke-width="5" fill="none"/>
+        <path d="M120 240 Q150 190 190 170" stroke="#c27e6a" stroke-width="5" fill="none"/>
+        <circle cx="60" cy="155" r="18" fill="#f9bfbf" opacity="0.95"/>
+        <circle cx="160" cy="115" r="20" fill="#ffb7b0" opacity="0.9"/>
+        <circle cx="190" cy="165" r="15" fill="#ffc0bc" opacity="0.9"/>
+        <circle cx="85" cy="135" r="16" fill="#fcccd0"/>
+        <circle cx="145" cy="140" r="18" fill="#ffb5af"/>
+        <circle cx="110" cy="175" r="14" fill="#fec5c5"/>
+    </svg>
+</div>
+
+<div class="sakura-storm" id="sakuraStorm"></div>
+
+<div class="landscape-container">
+    <div class="japanese-tabs">
+        <button class="tab-btn active" data-tab="home">🏠 HOME ・ 家</button>
+        <button class="tab-btn" data-tab="translate">🌸 翻訳 ・ TRANSLATE</button>
+        <button class="tab-btn" data-tab="legend">📖 伝承・レジェンド</button>
+    </div>
+
+    <!-- ホームタブ -->
+    <div id="homeTab" class="tab-content active-tab">
+        <div class="home-wrapper">
+            <div class="greeting-card">
+                <div class="konnichiwa">KONNICHIWA</div>
+                <div class="konnichiwa" style="font-size:3rem; letter-spacing:6px;">こんにちは</div>
+                <div class="michiko-name">🌸 美智子 (Michiko) 🌸</div>
+                <div class="home-sub" style="margin-top: 25px; color:#c27e6a;">❀ 桜舞う手話翻訳へようこそ ❀</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 翻訳タブ - 改善された明確なUI -->
+    <div id="translateTab" class="tab-content">
+        <div class="translation-layout">
+            <!-- カメラパネル -->
+            <div class="camera-panel">
+                <div class="video-box">
+                    <img src="{{ url_for('video_feed') }}" alt="手話カメラ映像" id="videoFeed">
+                </div>
+                <div class="camera-label">
+                    <span>🎥 手話認識カメラ｜SIGN RECOGNITION</span>
+                </div>
+            </div>
+
+            <!-- 右側情報パネル -->
+            <div class="info-panel">
+                <!-- 翻訳結果カード -->
+                <div class="translation-card">
+                    <div class="card-header">
+                        <div class="icon">🌸</div>
+                        <div class="title">手話翻訳結果</div>
+                        <div class="sub">ASL → 日本語</div>
+                    </div>
+                    <div id="jp-output" class="jp-output-text">手話を認識中...</div>
+                    <div id="en-sub" class="en-sub">サインを待っています</div>
+                </div>
+
+                <!-- 観光客音声認識カード - SPEAK HERE 明確 -->
+                <div class="tourist-card translation-card">
+                    <div class="card-header">
+                        <div class="icon">🎙️🗾</div>
+                        <div class="title">観光客の応答</div>
+                        <div class="speak-badge">🎤 SPEAK HERE 🎤</div>
+                    </div>
+                    
+                    <div class="mic-area">
+                        <div style="font-size:0.75rem; color:#b88a78; margin-bottom:8px;">⬇️ マイクを許可してボタンを押す ⬇️</div>
+                        <button class="btn-listen" id="listenBtn">
+                            🎙️ 話しかける / 聞き取り開始
+                        </button>
+                        <div class="speak-hint">
+                            <span>🔊</span> 日本語で話しかけてください <span>🌸</span>
+                        </div>
+                    </div>
+                    
+                    <div class="tourist-output-box">
+                        <div id="tourist-output">
+                            <span style="color:#c28a78; font-size:0.9rem;">── 認識された日本語がここに表示されます ──</span>
+                        </div>
+                    </div>
+                    
+                    <div class="footer-status">
+                        <div class="pulse"></div>
+                        <span>Vosk音声エンジン アクティブ｜マイク待機</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- レジェンドタブ -->
+    <div id="legendTab" class="tab-content">
+        <div class="legend-container">
+            <div class="legend-header">
+                <h2>📖 桜伝承・手話レジェンド 📖</h2>
+                <p style="text-align:center; color:#b27a6a;">ピンクの花びらと共に手話を学びましょう</p>
+            </div>
+            <div class="legend-grid" id="legendGrid"></div>
+            <div class="legend-note">
+                🌸 各カードをクリックして詳細な手話の説明を表示します。指の形を真似してみましょう。
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ======================= 桜吹雪 大量 =======================
+    function createSakuraBlizzard() {
+        const container = document.getElementById('sakuraStorm');
+        const petalCount = 120;
+        for (let i = 0; i < petalCount; i++) {
+            const petal = document.createElement('div');
+            petal.classList.add('petal-fall');
+            const size = Math.random() * 26 + 10;
+            petal.style.width = `${size}px`;
+            petal.style.height = `${size}px`;
+            petal.style.left = `${Math.random() * 100}%`;
+            const duration = Math.random() * 12 + 7;
+            petal.style.animationDuration = `${duration}s`;
+            petal.style.animationDelay = `${Math.random() * -25}s`;
+            const pinkShades = ['#ffb7c5', '#ffa5b8', '#ffc0d0', '#f7a8b8', '#f9b7c4', '#ffcad4'];
+            const randPink = pinkShades[Math.floor(Math.random() * pinkShades.length)];
+            petal.style.backgroundImage = `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='${encodeURIComponent(randPink)}'%3E%3Cpath d='M12,2.5 C12,2.5 9.2,6.2 12,9.5 C14.8,6.2 12,2.5 12,2.5 Z M12,2.5 C12,2.5 14.8,6.2 12,9.5 C9.2,6.2 12,2.5 12,2.5 Z' fill='${encodeURIComponent(randPink)}'/%3E%3Cpath d='M12,21.5 C12,21.5 9.2,17.8 12,14.5 C14.8,17.8 12,21.5 12,21.5 Z' fill='${encodeURIComponent(randPink)}'/%3E%3Cpath d='M2.5,12 C2.5,12 6.2,9.2 9.5,12 C6.2,14.8 2.5,12 2.5,12 Z' fill='${encodeURIComponent(randPink)}'/%3E%3Cpath d='M21.5,12 C21.5,12 17.8,9.2 14.5,12 C17.8,14.8 21.5,12 21.5,12 Z' fill='${encodeURIComponent(randPink)}'/%3E%3Ccircle cx='12' cy='12' r='2.8' fill='%23e85c7a'/%3E%3C/svg%3E")`;
+            petal.style.backgroundSize = "contain";
+            petal.style.backgroundRepeat = "no-repeat";
+            container.appendChild(petal);
+            setTimeout(() => { if(petal && petal.remove) petal.remove(); }, duration * 1000);
+        }
+    }
+    createSakuraBlizzard();
+    setInterval(() => {
+        if(document.getElementById('sakuraStorm').children.length < 70) createSakuraBlizzard();
+    }, 4500);
+
+    // ========== タブ切り替え ==========
+    const tabs = document.querySelectorAll('.tab-btn');
+    const homeDiv = document.getElementById('homeTab');
+    const translateDiv = document.getElementById('translateTab');
+    const legendDiv = document.getElementById('legendTab');
+    
+    function switchTab(tabId) {
+        homeDiv.classList.remove('active-tab');
+        translateDiv.classList.remove('active-tab');
+        legendDiv.classList.remove('active-tab');
+        if (tabId === 'home') homeDiv.classList.add('active-tab');
+        else if (tabId === 'translate') translateDiv.classList.add('active-tab');
+        else if (tabId === 'legend') legendDiv.classList.add('active-tab');
+        
+        tabs.forEach(btn => {
+            const target = btn.getAttribute('data-tab');
+            if ((tabId === 'home' && target === 'home') ||
+                (tabId === 'translate' && target === 'translate') ||
+                (tabId === 'legend' && target === 'legend')) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+    }
+    tabs.forEach(btn => {
+        btn.addEventListener('click', () => switchTab(btn.getAttribute('data-tab')));
+    });
+    
+    // ========== レジェンドデータ ==========
+    const signLegends = [
+        { jp: "こんにちは", en: "Konnichiwa / Hello", gestureDesc: "手のひらを前に向けて、額から軽く下ろします。", svgType: "wave" },
+        { jp: "ありがとう", en: "Arigatou / Thank you", gestureDesc: "指先をあごから前に優しく出します。", svgType: "thanks" },
+        { jp: "ごめんなさい", en: "Gomennasai / Sorry", gestureDesc: "こぶしを胸の前で小さく円を描きます。", svgType: "sorry" },
+        { jp: "お願いします", en: "Onegaishimasu", gestureDesc: "両手を合わせて胸の前で動かします。", svgType: "pray" },
+        { jp: "友達", en: "Tomodachi", gestureDesc: "人差し指を絡めて引っ張る。", svgType: "friend" },
+        { jp: "水", en: "Mizu", gestureDesc: "手でWの形を作り口元へ。", svgType: "water" },
+        { jp: "食べ物", en: "Tabemono", gestureDesc: "指先を合わせて口へ運ぶ。", svgType: "food" },
+        { jp: "日本", en: "Nihon", gestureDesc: "両手でお辞儀の形を作る。", svgType: "japan" },
+        { jp: "美智子", en: "Michiko", gestureDesc: "胸の前でMの形、優しく微笑む。", svgType: "michiko" },
+        { jp: "さようなら", en: "Sayonara", gestureDesc: "手を振りながら開く。", svgType: "bye" },
+        { jp: "どこですか？", en: "Where?", gestureDesc: "人差し指を左右に動かす。", svgType: "where" },
+        { jp: "愛", en: "Ai / Love", gestureDesc: "両腕を胸の上でクロス。", svgType: "love" }
+    ];
+    
+    function getGestureIcon(type) {
+        const icons = {
+            wave: `<svg viewBox="0 0 100 100" width="70" height="70"><path d="M30,50 Q45,30 60,45 Q75,60 85,40" stroke="#e8aa98" fill="none" stroke-width="4"/><circle cx="35" cy="45" r="6" fill="#ffcdc0"/><circle cx="55" cy="40" r="6" fill="#ffcdc0"/></svg>`,
+            thanks: `<svg viewBox="0 0 100 100"><path d="M40 60 L55 45 L70 55" stroke="#e8aa98" stroke-width="4" fill="none"/><circle cx="35" cy="60" r="7" fill="#ffd9ce"/><circle cx="65" cy="55" r="6" fill="#ffd9ce"/></svg>`,
+            sorry: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="18" stroke="#e8aa98" stroke-width="3" fill="none"/><path d="M45 50 L55 50" stroke="#e8aa98" stroke-width="3"/></svg>`,
+            pray: `<svg viewBox="0 0 100 100"><path d="M30 50 L50 35 L70 50" stroke="#e8aa98" fill="none" stroke-width="3"/><path d="M45 55 L55 55" stroke="#e8aa98"/></svg>`,
+            friend: `<svg viewBox="0 0 100 100"><path d="M30 55 L45 40 L60 55" stroke="#e8aa98" stroke-width="3"/><circle cx="35" cy="70" r="7" fill="#ffdad0"/><circle cx="60" cy="70" r="7" fill="#ffdad0"/></svg>`,
+            water: `<svg viewBox="0 0 100 100"><path d="M45 45 Q55 35 65 45" stroke="#e8aa98" fill="none" stroke-width="4"/><circle cx="42" cy="50" r="5" fill="#ffdad0"/></svg>`,
+            food: `<svg viewBox="0 0 100 100"><path d="M40 60 L55 45 L65 60" stroke="#e8aa98" fill="none" stroke-width="3"/></svg>`,
+            japan: `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="15" fill="#ffbfb0"/><path d="M35 70 L65 70" stroke="#e8aa98"/></svg>`,
+            michiko: `<svg viewBox="0 0 100 100"><path d="M45 45 L55 45 M50 45 L50 60" stroke="#e8aa98" stroke-width="3"/><circle cx="40" cy="60" r="5" fill="#ffcdc0"/><circle cx="60" cy="60" r="5" fill="#ffcdc0"/></svg>`,
+            bye: `<svg viewBox="0 0 100 100"><path d="M70 40 L85 30 M70 50 L85 45" stroke="#e8aa98"/><circle cx="38" cy="48" r="10" fill="#ffd9ce"/></svg>`,
+            where: `<svg viewBox="0 0 100 100"><path d="M50 30 L50 70" stroke="#e8aa98"/><path d="M35 50 L65 50" stroke="#e8aa98"/></svg>`,
+            love: `<svg viewBox="0 0 100 100"><path d="M50 35 Q35 20 25 40 Q20 55 50 70 Q80 55 75 40 Q65 20 50 35Z" fill="#ffb8aa" opacity="0.8"/></svg>`
+        };
+        return icons[type] || `<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="20" fill="#ffdad0"/><text x="50" y="58" font-size="20" text-anchor="middle" fill="#bc7a68">🌸</text></svg>`;
+    }
+    
+    function buildLegend() {
+        const grid = document.getElementById('legendGrid');
+        if (!grid) return;
+        grid.innerHTML = '';
+        signLegends.forEach(sign => {
+            const card = document.createElement('div');
+            card.className = 'sign-card';
+            card.innerHTML = `
+                <div class="sign-img">${getGestureIcon(sign.svgType)}</div>
+                <div class="sign-label">
+                    <div class="jp-word">${sign.jp}</div>
+                    <div class="en-word" style="font-size:0.8rem; color:#bc7a68;">${sign.en}</div>
+                </div>
+            `;
+            card.addEventListener('click', () => {
+                alert(`🌸 手話レジェンド: ${sign.jp}\n👐 やり方: ${sign.gestureDesc}\n✨ 美智子と一緒に練習しましょう ✨`);
+            });
+            grid.appendChild(card);
+        });
+    }
+    buildLegend();
+    
+    // ========== 翻訳ポーリング & 音声認識 ==========
+    function fetchTranslation() {
+        fetch('/get_text')
+            .then(res => res.json())
+            .then(data => {
+                if (data.jp && data.jp !== "") {
+                    document.getElementById('jp-output').innerHTML = escapeHtml(data.jp);
+                    document.getElementById('en-sub').innerHTML = `✨ ${escapeHtml(data.en || "認識済み")} ✨`;
+                    if (data.jp.includes("美智子")) {
+                        const card = document.querySelector('.translation-card');
+                        if(card) card.style.boxShadow = "0 0 0 3px #ffb3c6";
+                        setTimeout(() => { if(card) card.style.boxShadow = ""; }, 500);
+                    }
+                } else {
+                    document.getElementById('jp-output').innerHTML = `<span style="font-size:1rem;">🌸 手話を待っています 🌸</span>`;
+                    document.getElementById('en-sub').innerHTML = "サインを認識するのを待機中";
+                }
+            }).catch(e => console.warn);
+    }
+    setInterval(fetchTranslation, 500);
+    
+    const listenBtn = document.getElementById('listenBtn');
+    const touristDiv = document.getElementById('tourist-output');
+    async function startListening() {
+        if(!listenBtn) return;
+        touristDiv.innerHTML = `<div style="text-align:center;"><span>🎙️ 聞き取り中... (5秒間)</span><div style="font-size:0.7rem;">🌸 桜が囁いています 🌸</div></div>`;
+        listenBtn.disabled = true;
+        listenBtn.style.opacity = "0.7";
+        try {
+            const res = await fetch('/listen_tourist');
+            const data = await res.json();
+            let jpText = data.jp || "";
+            let enText = data.en || "";
+            if (!jpText && !enText) {
+                touristDiv.innerHTML = `<div style="text-align:center;"><span>❀ 音声が認識されませんでした ❀</span><br><small>もう一度お試しください</small></div>`;
+            } else {
+                touristDiv.innerHTML = `
+                    <div class="tourist-jp">${escapeHtml(jpText)}</div>
+                    <div class="tourist-en">🗣️ ${escapeHtml(enText)}</div>
+                `;
+                if(jpText.includes("こんにちは")) touristDiv.innerHTML += `<div style="font-size:0.7rem; color:#e8aa98; margin-top:6px;">🌸 こんにちは！素敵な挨拶です 🌸</div>`;
+            }
+        } catch(e) { 
+            touristDiv.innerHTML = `<div style="text-align:center;"><span>⚠️ サーバー接続エラー</span></div>`; 
+        }
+        finally { 
+            listenBtn.disabled = false;
+            listenBtn.style.opacity = "1";
+        }
+    }
+    if(listenBtn) listenBtn.addEventListener('click', startListening);
+    
+    function escapeHtml(str) { if(!str) return ""; return str.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}); }
+    
+    const videoImg = document.querySelector('.video-box img');
+    if(videoImg) videoImg.addEventListener('error', () => videoImg.src = "{{ url_for('video_feed') }}");
+</script>
+</body>
+</html>
